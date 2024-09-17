@@ -1,33 +1,31 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Project.ApiHub.Controllers.Search;
+using System.Threading;
 
 namespace Project.Hub.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/search")]
     public class HubController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        private readonly IMediator _mediator;
 
-        private readonly ILogger<HubController> _logger;
-
-        public HubController(ILogger<HubController> logger)
+        public HubController(IMediator mediator)
         {
-            _logger = logger;
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Search()
+        /// <summary>
+        /// Get all missions searching by mission code
+        /// </summary>
+        /// <param name="SearchMissionsRequest">Filtering data</param>
+        /// <returns>Return list of filtered zones</returns>
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> Search(SearchMissionsRequest request)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return Ok(await _mediator.Send(request));
         }
     }
 }

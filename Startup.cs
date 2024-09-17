@@ -1,3 +1,6 @@
+using MediatR;
+using Project.ApiHub.Services.HeadquartersService;
+
 namespace Project.Hub
 {
     public class Startup
@@ -14,8 +17,10 @@ namespace Project.Hub
             services.AddControllers();
             services.AddLogging();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(c =>
-            c.IncludeXmlComments("obj\\Debug\\net6.0\\Project.WebApi.xml"));
+            services.AddSwaggerGen();
+
+            services.AddSingleton<IMediator, Mediator>();
+            services.AddSingleton<IHeadquarterAPI, NewONGFranceAPI>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
